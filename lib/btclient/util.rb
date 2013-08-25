@@ -51,3 +51,13 @@ module Util
       ret
    end 
 end 
+
+class String
+  def convert_base(from, to)
+    self.to_i(from).to_s(to)
+  end
+
+  def remove_hex_escape
+     self.unpack('H*').first
+  end 
+end
