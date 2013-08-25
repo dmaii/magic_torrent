@@ -2,7 +2,7 @@ include BTClient
 
 module BTClient
    class Client
-      attr_accessor :torrent, :info_hash
+      attr_accessor :torrent, :info_hash, :socket
 
       def initialize(torrent, port)
          @torrent = torrent
@@ -21,13 +21,25 @@ module BTClient
          parsed_response = TrackerRequest.new(
             @unbencoded_torrent , @port, BTClient::ZERO_UPLOAD, peer_id
          ).send_and_receive
+         puts parsed_response
 
          parsed_response
       end 
 
    end 
 
-   # TODO: Implement this
    def perform_handshake
+      tracker_response = connect_to_tracker          
+      # Grab ip of first peer
+      # TODO: Make this handle more than one peer
+      ip = tracker_response['peers'][0]['ip']
+      port = tracker_response['peers'][0]['port']
+      @socket = TCPSocket.new ip, port
+      our_handshake = Handshake.new(@socket, @info_hash)
+      our_handshake.send_and_receive
+   end 
+
+   def indicate_interest
+      @socket.send(BTClient::INTEREST, 0)
    end 
 end 
