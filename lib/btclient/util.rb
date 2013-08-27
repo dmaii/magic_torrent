@@ -50,6 +50,11 @@ module Util
       end 
       ret
    end 
+
+  def self.parse_bitfield(hexes)
+    bins = hexes.collect { |hex| hex.to_s(2) }
+    bins.join.split('')
+  end 
 end 
 
 class String

@@ -17,7 +17,6 @@ module BTClient
       def send_and_receive
          ret = {}
          send_str = to_s
-         puts send_str.inspect
          @socket.send(send_str, 0)
          ret[:pstrlen] = @socket.recv(1)
          ret[:pstr] = @socket.recv(19)
