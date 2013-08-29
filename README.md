@@ -8,4 +8,4 @@ This repository is a total mess right now, since I've just been testing the prot
 protocol, I will organize this into a real rubygem.
 
 TODO:
--Figure out which pieces map to what file
+-Finish the request handling
