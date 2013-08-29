@@ -65,4 +65,9 @@ class String
   def remove_hex_escape
      self.unpack('H*').first
   end 
+
+  # Turns a hex string into \x{hex} format
+  def hexify
+    [self.hex].pack('C*')
+  end 
 end
