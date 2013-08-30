@@ -3,6 +3,7 @@ require_relative 'btclient/tracker_request'
 require_relative 'btclient/handshake'
 require_relative 'btclient/client'
 require_relative 'btclient/constants'
+require_relative 'btclient/piece_request'
 require 'bencode'
 require 'digest/sha1'
 require 'httpclient'
@@ -33,10 +34,13 @@ parsed_bitfield = Util::parse_bitfield raw_bitfield
 p parsed_bitfield
 p parsed_bitfield.size
 puts btclient.socket.readpartial(9).inspect
-request= request_length << request_id << request_index << request_offset << block_length
-p request_index.remove_hex_escape.convert_base(16, 10)
-#request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
-puts 'request ' + request.inspect
-btclient.socket.send(request, 0)
+#request= request_length << request_id << request_index << request_offset << block_length
+#p request_index.remove_hex_escape.convert_base(16, 10)
+request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
+req = PieceRequest.new(10, 0)
+p req.to_s
+p request
+#btclient.socket.send(request, 0)
+btclient.socket.send(req.to_s, 0)
 puts 'boo'
 puts btclient.socket.readpartial(16384).inspect

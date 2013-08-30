@@ -8,7 +8,7 @@ module BTClient
     # 16kb is the standard piece length
     STD_PIECE_LEN = 16384
     # Msg length is always 13
-    MSG_LEN = "\0\0\0\x13"
+    MSG_LEN = "\0\0\0\x0d"
     attr_accessor :piece_length, :req_id, :req_index,
                   :req_offset
     
@@ -20,6 +20,7 @@ module BTClient
     end 
 
     def to_s
+      p 'index' + as_hex('req_index')
       MSG_LEN + as_hex('req_id') + as_hex('req_index') + 
         as_hex('req_offset') + as_hex('piece_length')
     end 
@@ -28,14 +29,18 @@ module BTClient
       if attr_name.eql? 'req_id'
         req_id.to_s(16).hexify
       else
-        int_to_4bytehex(self.send attr_name)  
+        self.send(attr_name).to_4_byte_hex  
       end
     end 
 
     # Converts an integer to a 4 byte hex
     def int_to_4bytehex(int)
       r = ''
-      twos = int.to_s(16).scan(/../)
+      if int.to_s(16).size > 1
+        twos = int.to_s(16).scan(/../)
+      else 
+        twos = [int.to_s(16)]
+      end
       (1..4-twos.size).each { r << NULL }
       twos.each { |two| r << two.hexify }
       r

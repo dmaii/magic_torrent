@@ -49,4 +49,5 @@ module BTClient
     pieces = @info_hash['pieces'].scan(/.{20}/)
     pieces.collect { |hash| hash.unpack('H*').join }
   end 
+
 end 
