@@ -37,10 +37,15 @@ puts btclient.socket.readpartial(9).inspect
 #request= request_length << request_id << request_index << request_offset << block_length
 #p request_index.remove_hex_escape.convert_base(16, 10)
 request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
-req = PieceRequest.new(10, 0)
-p req.to_s
-p request
+req = PieceRequest.new(4, 0)
+p 'request ' + req.to_s
 #btclient.socket.send(request, 0)
 btclient.socket.send(req.to_s, 0)
-puts 'boo'
-puts btclient.socket.readpartial(16384).inspect
+readsize = 0
+until readsize >= 17000
+  current_read = btclient.socket.readpartial(1024*16)
+  p current_read if readsize.eql? 0 
+  current_size = current_read.size
+  p current_size
+  readsize += current_size
+end 

@@ -12,8 +12,6 @@ module BTClient
       raw_torrent = @torrent.read
       parser = BEncode::Parser.new(StringIO.new(raw_torrent))
       @unbencoded_torrent = parser.parse!
-      puts unbencoded_torrent['info'].keys
-      puts unbencoded_torrent['info']['files']
       @info_hash = @unbencoded_torrent['info']
     end 
 
