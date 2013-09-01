@@ -3,7 +3,7 @@ require_relative 'btclient/tracker_request'
 require_relative 'btclient/handshake'
 require_relative 'btclient/client'
 require_relative 'btclient/constants'
-require_relative 'btclient/piece_request'
+require_relative 'btclient/request'
 require 'bencode'
 require 'digest/sha1'
 require 'httpclient'
@@ -14,6 +14,7 @@ file = File.open('./testdata/python.torrent')
 port = '59696'
 uploaded = 0
 btclient = Client.new(file, port)
+p btclient.info_hash['piece length']
 p Util::piece_hashes(btclient.info_hash).size
 their_handshake = btclient.perform_handshake
 #indicate interest
@@ -26,5 +27,4 @@ p parsed_bitfield
 p parsed_bitfield.size
 puts btclient.socket.readpartial(9).inspect
 #request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
-p PieceRequest.new(4, 0).download(btclient.socket).size
-
+p Request.new(4, 0).download(btclient.socket).size
