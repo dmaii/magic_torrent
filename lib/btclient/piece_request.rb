@@ -10,8 +10,8 @@ module BTClient
     # Msg length is always 13
     MSG_LEN = "\0\0\0\x0d"
     attr_accessor :piece_length, :req_id, :req_index,
-                  :req_offset
-    
+      :req_offset
+
     def initialize(req_index, req_offset)
       @piece_length = STD_PIECE_LEN 
       @req_id = REQ_ID
@@ -43,6 +43,23 @@ module BTClient
       end
       (1..4-twos.size).each { r << NULL }
       twos.each { |two| r << two.hexify }
+      r
+    end 
+
+    def download(socket, id=nil, len=nil)
+      @req_id = id if id
+      @piece_length = len if len
+      socket.send(self.to_s, 0)
+
+      # Reads data from the socket until 16kb is reached
+      read_size = 0
+      r = ''
+      until read_size >= (4 + req.piece_length) 
+        current_read = socket.readpartial(1024*16)
+        current_size = current_read.size
+        r << current_read
+        read_size += current_size
+      end 
       r
     end 
   end 

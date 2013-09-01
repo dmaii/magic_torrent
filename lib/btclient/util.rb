@@ -4,32 +4,32 @@ module Util
   # in order to make a hash URL friendly
   def self.percent_encode_hash(hash)
     hash = hash.upcase.split('')
-    ret = []
+    r = []
     c = 0
     until hash.empty?
       c = 0 if c >= 2
-      ret << '%' if c.eql? 0
-      ret << hash.shift
+      r << '%' if c.eql? 0
+      r << hash.shift
       c += 1
     end
-    ret.join('')
+    r.join('')
   end 
 
   def self.percent_to_hash(percent_encoded)
     start_array = percent_encoded.split('')
-    ret = []
+    r = []
     while not start_array.empty?
       c = start_array.first
       if c.eql? '%'
         start_array.shift
-        ret << start_array.shift.downcase
-        ret << start_array.shift.downcase
+        r << start_array.shift.downcase
+        r << start_array.shift.downcase
       else
-        ret << start_array.shift.unpack('H*').join
+        r << start_array.shift.unpack('H*').join
       end
-      #puts ret.to_s
+      #puts r.to_s
     end 
-    ret
+    r
   end 
 
   # Gets all the lengths from the files array of
@@ -43,18 +43,25 @@ module Util
   end 
 
   def self.hash_to_url(hash)
-    ret = '?'
+    r = '?'
     hash.each_with_index do |(key, value), index|
-      ret << '&' if not index.eql? 0
-      ret << key.to_s << '=' << value.to_s
+      r << '&' if not index.eql? 0
+      r << key.to_s << '=' << value.to_s
     end 
-    ret
+    r
   end 
 
   def self.parse_bitfield(hexes)
     bins = hexes.collect { |hex| hex.to_s(2) }
     bins.join.split('')
   end 
+
+  # Gets the hashes of the pieces from the info_hash
+  def self.piece_hashes(info_hash)
+    pieces = info_hash['pieces'].scan(/.{20}/)
+    pieces.collect { |hash| hash.unpack('H*').join }
+  end 
+
 end 
 
 class String

@@ -42,10 +42,5 @@ module BTClient
   def indicate_interest
     @socket.send(BTClient::INTEREST, 0)
   end 
-
-  def pieces
-    pieces = @info_hash['pieces'].scan(/.{20}/)
-    pieces.collect { |hash| hash.unpack('H*').join }
-  end 
-
+  
 end 
