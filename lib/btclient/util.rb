@@ -1,3 +1,6 @@
+require_relative 'constants'
+include BTClient
+
 module Util
 
   # Adds a percentage symbol every two characters

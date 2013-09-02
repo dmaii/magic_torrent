@@ -14,7 +14,7 @@ file = File.open('./testdata/python.torrent')
 port = '59696'
 uploaded = 0
 btclient = Client.new(file, port)
-p btclient.info_hash
+#p btclient.info_hash
 p Util::piece_hashes(btclient.info_hash).size
 their_handshake = btclient.perform_handshake
 #indicate interest
@@ -28,3 +28,9 @@ p parsed_bitfield.size
 puts btclient.socket.readpartial(9).inspect
 #request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
 #p Request.new(4, 0).download(btclient.socket).size
+
+# Instantiate Pieces
+files = btclient.info_hash['files']
+piece_len = btclient.info_hash['piece length']
+pieces = Pieces.new files, piece_len
+p btclient.download_file 1

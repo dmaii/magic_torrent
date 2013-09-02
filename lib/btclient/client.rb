@@ -35,9 +35,24 @@ module BTClient
     # Downloads the file at this index on 'files'
     # inside the info hash
     def download_file(index)
-      files = @info_hash['files']
-      prev_files = files.take index
-      prev_len= prev_files.reduce { |s, file| sum += file['length'] }
+      require 'debugger'
+      debugger
+      prev_pieces = 0
+      if index > 1
+        files = @info_hash['files']
+        filename = files[index]['path'].join('/')
+        prev_files = files.take index
+        prev_len= prev_files.reduce { |s, file| sum += file['length'] }
+        prev_pieces = prev_len / files['piece length'] - 1
+        file_length = files[index]['length']
+      else 
+        filename = @info_hash['name']
+        file_length = @info_hash['length']
+      end 
+
+      File f = File.open("./#{filename}", w)
+      pieces = Pieces.new @info_hash
+      pieces.download_range prev_pieces, file_length / pieces.length   
     end 
 
     def indicate_interest
