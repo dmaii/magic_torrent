@@ -35,28 +35,40 @@ module BTClient
     # Downloads the file at this index on 'files'
     # inside the info hash
     def download_file(index)
-      require 'debugger'
-      debugger
       prev_pieces = 0
-      if index > 1
+
+      if @info_hash.has_key? 'files'
         files = @info_hash['files']
-        filename = files[index]['path'].join('/')
-        prev_files = files.take index
-        prev_len= prev_files.reduce { |s, file| sum += file['length'] }
-        prev_pieces = prev_len / files['piece length'] - 1
-        file_length = files[index]['length']
-      else 
-        filename = @info_hash['name']
-        file_length = @info_hash['length']
+        filename = files[index]['path'].join('/') 
       end 
 
-      File f = File.open("./#{filename}", w)
       pieces = Pieces.new @info_hash
-      pieces.download_range prev_pieces, file_length / pieces.length   
+      if index > 0
+        prev_files = files.take index
+        #prev_len= prev_files.inject(0) { |s, file| s += file['length'] }
+        prev_len = calc_file_lengths prev_files
+        prev_pieces = prev_len / pieces.length - 1
+        file_length = files[index]['length']
+        file_pieces = (file_length.to_f / pieces.length).ceil
+        e = prev_pieces + file_pieces
+      else
+        filename = @info_hash['name']
+        file_length = @info_hash['length']
+        e = pieces.total - 1
+      end 
+
+      f = File.open("./#{filename}", 'w')
+      #downloaded = pieces.download_range prev_pieces, e, @socket   
+      downloaded = pieces.download_range 100, 101, @socket   
+      p 'hello warudo'
     end 
 
     def indicate_interest
       @socket.send(BTClient::INTEREST, 0)
+    end 
+
+    def calc_file_lengths(file_hashes)
+      file_hashes.inject(0) { |s, file| s += file['length'] }
     end 
   end 
 end 

@@ -2,13 +2,12 @@ require_relative 'request'
 
 module BTClient
   class Pieces
-    attr_accessor :files, :length, :requests
+    attr_accessor :files, :length, :requests, :total, :left
 
     # Files corresponds to the info hash's file key
     # Length corresponds to the info hash's piece length
     def initialize(info_hash, requests = [], req_length = nil)
       # This is the byte length of a single file
-      p info_hash
       @length = info_hash['piece length']
 
       # The 'total' variable represents the total number of pieces.
@@ -19,14 +18,14 @@ module BTClient
         # This is the total byte length of the torrent
         total_bytes = files.inject(0) { |sum, file| sum += file['length'] }
         @total = (total_bytes.to_f / @length).ceil
-        left = total_bytes % @length
+        @left = total_bytes % @length
       else
         # In a single file scenario, there's no 'files' key. There's
         # only a length, name, and hash field. The hash is not used here
         file_len = info_hash['length']
         @files = [ { length: file_len, name: info_hash['name'] } ]
         @total = (file_len.to_f / @length).ceil 
-        left = total_bytes % @length
+        @left = total_bytes % @length
       end 
 
       @requests = requests 
@@ -59,7 +58,8 @@ module BTClient
     # an array of downloaded strings for each request
     def download_range(s, e, socket)
       r = {}
-      @requests.each do |req|
+      target = @requests[s + 1, e]
+      target.each do |req|
         piece = r[req.req_index]
         r[piece] ||= [] 
         r[piece].push(req.download(socket))

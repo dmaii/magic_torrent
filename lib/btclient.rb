@@ -30,7 +30,4 @@ puts btclient.socket.readpartial(9).inspect
 #p Request.new(4, 0).download(btclient.socket).size
 
 # Instantiate Pieces
-files = btclient.info_hash['files']
-piece_len = btclient.info_hash['piece length']
-pieces = Pieces.new files, piece_len
 p btclient.download_file 1
