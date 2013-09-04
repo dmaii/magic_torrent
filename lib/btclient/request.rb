@@ -20,9 +20,10 @@ module BTClient
     end 
 
     def to_s
-      p 'index' + as_hex('req_index')
-      MSG_LEN + as_hex('req_id') + as_hex('req_index') + 
+      r = MSG_LEN + as_hex('req_id') + as_hex('req_index') + 
         as_hex('req_offset') + as_hex('length')
+      p r
+      r
     end 
 
     def as_hex(attr_name)

@@ -41,7 +41,6 @@ module BTClient
         files = @info_hash['files']
         filename = files[index]['path'].join('/') 
       end 
-
       pieces = Pieces.new @info_hash
       if index > 0
         prev_files = files.take index
@@ -59,7 +58,7 @@ module BTClient
 
       f = File.open("./#{filename}", 'w')
       #downloaded = pieces.download_range prev_pieces, e, @socket   
-      downloaded = pieces.download_range 100, 101, @socket   
+      downloaded = pieces.download_range 440, 441, @socket   
       p 'hello warudo'
     end 
 

@@ -44,9 +44,11 @@ module BTClient
           req.length = req_length if req_length
         end 
 
+        p current_index
         @requests << Request.new(current_index, current_offset)     
         if current_offset + req.length >= @length
           current_index += 1
+          current_offset = 0
         else
           current_offset += req.length
         end 
@@ -58,7 +60,10 @@ module BTClient
     # an array of downloaded strings for each request
     def download_range(s, e, socket)
       r = {}
-      target = @requests[s + 1, e]
+      #target = @requests[s + 1, e]
+      target = @requests.select do |req|
+        req.req_index >= s && req.req_index <= e
+      end 
       target.each do |req|
         piece = r[req.req_index]
         r[piece] ||= [] 
