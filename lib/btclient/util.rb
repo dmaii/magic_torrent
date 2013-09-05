@@ -87,7 +87,7 @@ class Fixnum
   def to_4_byte_hex
     r = ''
     if self.to_s(16).size > 1
-      twos = self.to_s(16).partition(/../).reject { |i| i.empty? }
+      twos = self.to_s(16).rpartition(/../).reject { |i| i.empty? }
     else 
       twos = [self.to_s(16)]
     end

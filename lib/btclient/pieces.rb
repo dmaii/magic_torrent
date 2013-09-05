@@ -44,7 +44,6 @@ module BTClient
           req.length = req_length if req_length
         end 
 
-        p current_index
         @requests << Request.new(current_index, current_offset)     
         if current_offset + req.length >= @length
           current_index += 1

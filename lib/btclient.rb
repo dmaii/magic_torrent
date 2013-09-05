@@ -32,6 +32,6 @@ puts btclient.socket.readpartial(9).inspect
 # Instantiate Pieces
 #request = "\x00\x00\x00\r\x06\x00\x00\e\b\x00\x00\x00\x00\x00\x00@\x00"
 
-btclient.socket.send(Request.new(250, 0).to_s, 0)
-p btclient.socket.readpartial(1024*16)
-#p btclient.download_file 1
+#btclient.socket.send(Request.new(440, 0).to_s, 0)
+#p btclient.socket.readpartial(1024*16)
+p btclient.download_file 1
