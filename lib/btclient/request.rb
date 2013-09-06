@@ -61,6 +61,7 @@ module BTClient
         r << current_read
         read_size += current_size
       end 
+      puts r.to_s
       r
     end 
   end 

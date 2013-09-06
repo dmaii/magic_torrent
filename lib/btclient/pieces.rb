@@ -6,6 +6,12 @@ module BTClient
 
     # Files corresponds to the info hash's file key
     # Length corresponds to the info hash's piece length
+    # Numbers used for the python torrent:
+    # 14537518 = total bytes in torrent
+    # 32768 = total bytes per piece
+    # 16384 = total bytes per regular request
+    # 21294 = remainder of 14537518 and 32768
+    # 4910 = remainder of 21294 and 16384 (also 14537518 and 16384)
     def initialize(info_hash, requests = [], req_length = nil)
       # This is the byte length of a single file
       @length = info_hash['piece length']
@@ -30,27 +36,33 @@ module BTClient
 
       @requests = requests 
 
+      puts total_bytes
+      puts @length
+      puts left
+
       # Create one request for every single piece
+      total_counter = total_bytes || file_len
       current_offset = current_index = 0
       until current_index.eql? @total
         req = Request.new current_index, current_offset  
-        req.length = req_length if req_length
 
         # If it's the last piece, use the remainder 
         # from the total calculation
-        if current_index.eql? @total - 1
-          req_length = left
+        # subtract one because total number of pieces is 1 indexed
+        if current_index.eql?(@total - 1) && total_counter < req.length
+          req.length = total_counter
         else 
           req.length = req_length if req_length
         end 
 
         @requests << Request.new(current_index, current_offset)     
-        if current_offset + req.length >= @length
+        if current_offset + req.length >= @length || (total_counter.eql? 0)
           current_index += 1
           current_offset = 0
         else
           current_offset += req.length
         end 
+        total_counter -= req.length  
       end 
     end 
     

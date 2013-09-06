@@ -60,7 +60,7 @@ module BTClient
       puts 'prev ' + prev_pieces.to_s
       puts 'e ' + e.to_s
       #downloaded = pieces.download_range prev_pieces, e, @socket   
-      downloaded = pieces.download_range 443, 443, @socket   
+      downloaded = pieces.download_range 443, 444, @socket   
       f.write(downloaded.values.join)
       f.close_write
       p 'hello warudo'
