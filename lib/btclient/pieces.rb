@@ -36,10 +36,6 @@ module BTClient
 
       @requests = requests 
 
-      puts total_bytes
-      puts @length
-      puts left
-
       # Create one request for every single piece
       total_counter = total_bytes || file_len
       piece_counter = @length
@@ -50,12 +46,7 @@ module BTClient
         # If it's the last piece, use the remainder 
         # from the total calculation
         # subtract one because total number of pieces is 1 indexed
-        if total_counter < req.length
-          require 'debugger'
-          debugger
-        end 
-        # If last piece and remainder bit
-        if total_counter <= @length
+        if total_counter <= req.length
           req.length = total_counter
         # If there's a piece remainder, consume the remainder
         elsif piece_counter < req.length
@@ -65,15 +56,15 @@ module BTClient
         end 
         piece_counter -= req.length  
         @requests << req
+        total_counter -= req.length
 
-        if piece_counter.eql? 0
+        if total_counter.eql?(0) || piece_counter.eql?(0) 
           current_index += 1
           current_offset = 0
           piece_counter = @length
         else
           current_offset += req.length
         end 
-        total_counter -= req.length
       end 
     end 
     

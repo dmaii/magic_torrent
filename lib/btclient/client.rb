@@ -44,11 +44,16 @@ module BTClient
       pieces = Pieces.new @info_hash
       if index > 0
         prev_files = files.take index
+        post_files = files.drop index + 1
         #prev_len= prev_files.inject(0) { |s, file| s += file['length'] }
         prev_len = calc_file_lengths prev_files
+        post_len = calc_file_lengths post_files
         prev_pieces = prev_len / pieces.length - 1
         file_length = files[index]['length']
         file_pieces = (file_length.to_f / pieces.length).ceil
+        piece_len = files['piece length']
+        prev_in_piece = prev_len % piece_len
+        post_in_piece = post_len % piece_len
         e = prev_pieces + file_pieces 
       else
         filename = @info_hash['name']
@@ -59,8 +64,7 @@ module BTClient
       f = File.open("./#{filename}", 'w')
       puts 'prev ' + prev_pieces.to_s
       puts 'e ' + e.to_s
-      #downloaded = pieces.download_range prev_pieces, e, @socket   
-      downloaded = pieces.download_range 443, 444, @socket   
+      downloaded = pieces.download_range(prev_pieces || 0, e, @socket)   
       f.write(downloaded.values.join)
       f.close_write
       p 'hello warudo'
