@@ -52,18 +52,13 @@ module BTClient
       end 
 
       f = File.open("./#{filename}", 'w')
-      puts 's ' + s_byte.to_s
-      puts 'e ' + e_byte.to_s
-      #puts 'sp ' + s_piece.to_s
-      #puts 'ep ' + e_piece.to_s
       downloaded = p.download_range(s_piece || 0, e_piece, @socket)   
       puts downloaded.values.join[s_byte, e_byte].size
-      f.write(downloaded.values.join[s_byte, e_byte])
+      f.write(downloaded.values.join[s_byte..e_byte])
       f.close_write
-      puts 'hello warudo'
     end 
 
-    def indicate_interest
+    def interested
       @socket.send(BTClient::INTEREST, 0)
     end 
 

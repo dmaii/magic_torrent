@@ -60,7 +60,9 @@ module BTClient
         r << current_read
         read_size += current_size
       end 
-      r
+      # The first 13 characters are going to be part of the piece
+      # message, and aren't actually part of the data
+      r[13..-1]
     end 
   end 
 end
