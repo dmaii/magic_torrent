@@ -13,7 +13,7 @@ module BTClient
     # 21294 = remainder of 14537518 and 32768
     # 4910 = remainder of 21294 and 16384 (also 14537518 and 16384)
     def initialize(info_hash, requests = [], req_length = nil)
-      # This is the byte length of a single file
+      # This is the byte length of a single piece
       @length = info_hash['piece length']
 
       # The 'total' variable represents the total number of pieces.

@@ -34,4 +34,4 @@ puts btclient.socket.readpartial(9).inspect
 
 #btclient.socket.send(Request.new(440, 0).to_s, 0)
 #p btclient.socket.readpartial(1024*16)
-p btclient.download_file 1
+btclient.download_file 1

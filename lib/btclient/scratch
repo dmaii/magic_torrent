@@ -1,0 +1,25 @@
+3 files
+
+2nd file selected
+
+prev files = 1
+post files = 3, 4
+
+piece length = 32768
+
+prev len = 14536192 
+file len = 601
+post len = 669 + 54 = 723
+
+starting piece = 14536192 / 32768 + 1 = 444
+starting byte = 14536192 % 32768 + 1 = 19969
+
+if the file overflows the current piece, then
+(starting byte + file len) - piece length = overflow length
+overflow length / piece length = overflow pieces
+overflow length % piece length = overflow left
+read overflow pieces + last piece
+on last piece, read from 0 to overflow left
+
+if the file does not overflow the current piece, then
+starting byte + file length = end byte

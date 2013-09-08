@@ -22,7 +22,6 @@ module BTClient
     def to_s
       r = MSG_LEN + as_hex('req_id') + as_hex('req_index') + 
         as_hex('req_offset') + as_hex('length')
-      p r
       r
     end 
 
@@ -61,7 +60,6 @@ module BTClient
         r << current_read
         read_size += current_size
       end 
-      puts r.to_s
       r
     end 
   end 

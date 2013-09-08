@@ -39,43 +39,69 @@ module BTClient
 
       if @info_hash.has_key? 'files'
         files = @info_hash['files']
+        puts files
         filename = files[index]['path'].join('/') 
       end 
-      pieces = Pieces.new @info_hash
-      if index > 0
-        prev_files = files.take index
-        post_files = files.drop index + 1
-        #prev_len= prev_files.inject(0) { |s, file| s += file['length'] }
-        prev_len = calc_file_lengths prev_files
-        post_len = calc_file_lengths post_files
-        prev_pieces = prev_len / pieces.length - 1
-        file_length = files[index]['length']
-        file_pieces = (file_length.to_f / pieces.length).ceil
-        piece_len = files['piece length']
-        prev_in_piece = prev_len % piece_len
-        post_in_piece = post_len % piece_len
-        e = prev_pieces + file_pieces 
-      else
-        filename = @info_hash['name']
-        file_length = @info_hash['length']
-        e = pieces.total - 1
+      p = Pieces.new @info_hash
+      # All you need are here are the starting piece, starting byte,
+      # ending piece, and ending byte
+
+      if @info_hash.has_key? 'files'
+        file_loc = file_location index
+        s_piece, s_byte, e_piece, e_byte = file_loc.values
       end 
 
       f = File.open("./#{filename}", 'w')
-      puts 'prev ' + prev_pieces.to_s
-      puts 'e ' + e.to_s
-      downloaded = pieces.download_range(prev_pieces || 0, e, @socket)   
-      f.write(downloaded.values.join)
+      puts 's ' + s_byte.to_s
+      puts 'e ' + e_byte.to_s
+      #puts 'sp ' + s_piece.to_s
+      #puts 'ep ' + e_piece.to_s
+      downloaded = p.download_range(s_piece || 0, e_piece, @socket)   
+      puts downloaded.values.join[s_byte, e_byte].size
+      f.write(downloaded.values.join[s_byte, e_byte])
       f.close_write
-      p 'hello warudo'
+      puts 'hello warudo'
     end 
 
     def indicate_interest
       @socket.send(BTClient::INTEREST, 0)
     end 
 
+    # Get the total byte length of an array of files
     def calc_file_lengths(file_hashes)
       file_hashes.inject(0) { |s, file| s += file['length'] }
+    end 
+
+    # This method calculates, for a certain info hash and 
+    # file index, which piece to start downloading at, which
+    # piece to stop downloading at, which byte on the starting
+    # piece to write to the file, and which byte on the ending
+    # piece to stop writing to the file. This method is only
+    # for multi file torrents
+    def file_location(index)
+      r = {}
+      files = @info_hash['files']
+      piece_bytes = @info_hash['piece length']
+
+      prev_bytes = calc_file_lengths(files.take(index))
+      file_bytes = files[index]['length']
+      post_bytes = calc_file_lengths(files.drop(index + 1)) 
+
+      # Not adding one to starting piece and byte to account for 
+      # 0 index
+      r[:starting_piece] = prev_bytes / piece_bytes 
+      starting_offset = prev_bytes % piece_bytes
+      r[:starting_byte] = starting_offset 
+
+      if starting_offset + file_bytes > piece_bytes 
+        oflow_bytes = starting_offset + file_bytes - piece_bytes  
+        oflow_pieces, oflow_remainder = oflow_bytes.divmod piece_bytes 
+        r[:ending_piece] = starting_piece + oflow_pieces
+      else
+        r[:ending_piece] = r[:starting_piece]
+      end 
+      r[:ending_byte] = starting_offset + file_bytes
+      r
     end 
   end 
 end 
