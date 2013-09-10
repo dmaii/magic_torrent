@@ -1,7 +1,7 @@
 require_relative 'util'
 require 'httpclient'
 
-module BTClient
+module MagicTorrent
 
    ZERO_UPLOAD = 0
 

@@ -1,7 +1,10 @@
-include BTClient
+include MagicTorrent
 
-module BTClient
-  class Client
+module MagicTorrent
+
+  INTEREST = "\0\0\0\x01\x02"
+
+  class Controller
     attr_accessor :torrent, :info_hash, :socket, :unbencoded_torrent
 
     def initialize(torrent, port)
@@ -59,7 +62,7 @@ module BTClient
     end 
 
     def interested
-      @socket.send(BTClient::INTEREST, 0)
+      @socket.send(MagicTorrent::INTEREST, 0)
     end 
 
     # Get the total byte length of an array of files

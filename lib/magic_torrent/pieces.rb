@@ -1,6 +1,6 @@
 require_relative 'request'
 
-module BTClient
+module MagicTorrent
   class Pieces
     attr_accessor :files, :length, :requests, :total, :left
 

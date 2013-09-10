@@ -1,37 +1,34 @@
-require_relative 'btclient/util'
-require_relative 'btclient/tracker_request'
-require_relative 'btclient/handshake'
-require_relative 'btclient/client'
-require_relative 'btclient/constants'
-require_relative 'btclient/pieces'
+require_relative 'magic_torrent/util'
+require_relative 'magic_torrent/tracker_request'
+require_relative 'magic_torrent/handshake'
+require_relative 'magic_torrent/controller'
+require_relative 'magic_torrent/pieces'
 require 'bencode'
 require 'digest/sha1'
 require 'httpclient'
-include BTClient
+include MagicTorrent
 
 file = File.open('./testdata/python.torrent')
 #any port in the ephemeral range seems to work
-port = '59696'
+port = rand 49152..65535
 uploaded = 0
-btclient = Client.new(file, port)
-#p btclient.info_hash
-p Util::piece_hashes(btclient.info_hash).size
-their_handshake = btclient.perform_handshake
+magic_torrent = Controller.new(file, port)
+their_handshake = magic_torrent.perform_handshake
 #indicate interest
-btclient.socket.send("\0\0\0\x01\x02", 0)
-message_length = btclient.socket.readpartial(4).unpack('C*')
-message_type = btclient.socket.readpartial(1).unpack('C*')
-raw_bitfield = btclient.socket.readpartial(message_length[3]).unpack('C*')
+magic_torrent.socket.send("\0\0\0\x01\x02", 0)
+message_length = magic_torrent.socket.readpartial(4).unpack('C*')
+message_type = magic_torrent.socket.readpartial(1).unpack('C*')
+raw_bitfield = magic_torrent.socket.readpartial(message_length[3]).unpack('C*')
 parsed_bitfield = Util::parse_bitfield raw_bitfield
 p parsed_bitfield
 p parsed_bitfield.size
-puts btclient.socket.readpartial(9).inspect
+puts magic_torrent.socket.readpartial(9).inspect
 #request = "\x00\x00\x00\r\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x00"
-#p Request.new(4, 0).download(btclient.socket).size
+#p Request.new(4, 0).download(magic_torrent.socket).size
 
 # Instantiate Pieces
 #request = "\x00\x00\x00\r\x06\x00\x00\e\b\x00\x00\x00\x00\x00\x00@\x00"
 
-#btclient.socket.send(Request.new(440, 0).to_s, 0)
-#p btclient.socket.readpartial(1024*16)
-btclient.download_file 3
+#magic_torrent.socket.send(Request.new(440, 0).to_s, 0)
+#p magic_torrent.socket.readpartial(1024*16)
+magic_torrent.download_file 3

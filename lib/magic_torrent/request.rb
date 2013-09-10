@@ -1,7 +1,8 @@
-require_relative 'constants'
-include BTClient
+require_relative 'util'
 
-module BTClient
+include MagicTorrent
+
+module MagicTorrent
   class Request
     # BT requests are always six
     REQ_ID = 6
@@ -41,7 +42,7 @@ module BTClient
       else 
         twos = [int.to_s(16)]
       end
-      (1..4-twos.size).each { r << NULL }
+      (1..4-twos.size).each { r << Util::NULL }
       twos.each { |two| r << two.hexify }
       r
     end 

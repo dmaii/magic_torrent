@@ -1,4 +1,4 @@
-module BTClient
+module MagicTorrent
    class Handshake
 
       PSTRLEN = "\023"

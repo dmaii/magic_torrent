@@ -1,7 +1,6 @@
-require_relative 'constants'
-include BTClient
-
 module Util
+
+  NULL = "\0"
 
   # Adds a percentage symbol every two characters
   # in order to make a hash URL friendly
@@ -91,7 +90,7 @@ class Fixnum
     else 
       twos = [self.to_s(16)]
     end
-    (1..4-twos.size).each { r << NULL }
+    (1..4-twos.size).each { r << Util::NULL }
     twos.each { |two| r << two.hexify }
     r
   end 
