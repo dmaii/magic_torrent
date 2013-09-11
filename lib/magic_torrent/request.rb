@@ -10,25 +10,25 @@ module MagicTorrent
     STD_PIECE_LEN = 16384
     # Msg length is always 13
     MSG_LEN = "\0\0\0\x0d"
-    attr_accessor :length, :req_id, :req_index,
-      :req_offset
+    attr_accessor :length, :id, :index, :offset
 
     def initialize(req_index, req_offset)
       @length = STD_PIECE_LEN 
-      @req_id = REQ_ID
-      @req_index = req_index
-      @req_offset = req_offset
+      @id = REQ_ID
+      @index = req_index
+      @offset = req_offset
+      @downloaded = false
     end 
 
-    def to_s
-      r = MSG_LEN + as_hex('req_id') + as_hex('req_index') + 
-        as_hex('req_offset') + as_hex('length')
+    def to_hex
+      r = MSG_LEN + as_hex('id') + as_hex('index') + 
+        as_hex('offset') + as_hex('length')
       r
     end 
 
     def as_hex(attr_name)
-      if attr_name.eql? 'req_id'
-        req_id.to_s(16).hexify
+      if attr_name.eql? 'id'
+        id.to_s(16).hexify
       else
         self.send(attr_name).to_4_byte_hex  
       end
@@ -48,9 +48,9 @@ module MagicTorrent
     end 
 
     def download(socket, id=nil, len=nil)
-      @req_id = id if id
+      @id = id if id
       @length = len if len
-      socket.send(self.to_s, 0)
+      socket.send(self.to_hex, 0)
 
       # Reads data from the socket until 16kb is reached
       read_size = 0
@@ -61,6 +61,7 @@ module MagicTorrent
         r << current_read
         read_size += current_size
       end 
+      @downloaded = true
       # The first 13 characters are going to be part of the piece
       # message, and aren't actually part of the data
       r[13..-1]

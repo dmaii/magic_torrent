@@ -2,10 +2,10 @@ include MagicTorrent
 
 module MagicTorrent
 
-  INTEREST = "\0\0\0\x01\x02"
 
   class Controller
-    attr_accessor :torrent, :info_hash, :socket, :unbencoded_torrent
+    attr_accessor :torrent, :info_hash, :socket, :unbencoded_torrent, 
+      :bitfield
 
     def initialize(torrent, port)
       @torrent = torrent
@@ -61,10 +61,7 @@ module MagicTorrent
       f.close_write
     end 
 
-    def interested
-      @socket.send(MagicTorrent::INTEREST, 0)
-    end 
-
+    
     # Get the total byte length of an array of files
     def calc_file_lengths(file_hashes)
       file_hashes.inject(0) { |s, file| s += file['length'] }

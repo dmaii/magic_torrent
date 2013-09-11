@@ -2,6 +2,19 @@ module Util
 
   NULL = "\0"
 
+  MSG_TYPE = {
+    0 => 'choke',
+    1 => 'unchoke',
+    2 => 'interested',
+    3 => 'not interested',
+    4 => 'have',
+    5 => 'bitfield',
+    6 => 'request',
+    7 => 'piece',
+    8 => 'cancel',
+    9 => 'port'
+  }
+
   # Adds a percentage symbol every two characters
   # in order to make a hash URL friendly
   def self.percent_encode_hash(hash)

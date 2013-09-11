@@ -1,4 +1,4 @@
-btclient
+Magic Torrent
 ========
 
 This is a toy BitTorrent client I've been playing with. I've used BitTorrent alot in the past, and I've never understood
@@ -8,4 +8,4 @@ This repository is a total mess right now, since I've just been testing the prot
 protocol, I will organize this into a real rubygem.
 
 TODO:
-Clean everything up, then implement multi-peer
+Finish creating a peer pool

@@ -75,12 +75,12 @@ module MagicTorrent
       r = {}
       #target = @requests[s + 1, e]
       target = @requests.select do |req|
-        req.req_index >= s && req.req_index <= e
+        req.index >= s && req.index <= e
       end 
       #require 'debugger'
       #debugger
       target.each do |req|
-        piece = r[req.req_index]
+        piece = r[req.index]
         r[piece] ||= [] 
         r[piece].push(req.download(socket))
       end 
