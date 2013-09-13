@@ -8,7 +8,7 @@ require 'digest/sha1'
 require 'httpclient'
 include MagicTorrent
 
-file = File.open('./testdata/python.torrent')
+file = File.open('./testdata/a.torrent')
 #any port in the ephemeral range seems to work
 port = rand 49152..65535
 uploaded = 0

@@ -1,3 +1,4 @@
+require_relative 'peer'
 include MagicTorrent
 
 module MagicTorrent
@@ -28,6 +29,19 @@ module MagicTorrent
       tracker_response = connect_to_tracker          
       # Grab ip of first peer
       # TODO: Make this handle more than one peer
+      interested_peers = []
+      threads = tracker_response['peers'].inject([]) do |r, peer_hash|
+        peer_id = peer_hash['peer id']
+        peer_ip = peer_hash['ip']
+        peer_port = peer_hash['port']
+        peer = Peer.new peer_id, peer_ip, peer_port
+        r << Thread.new(peer) {
+          msg_type = peer.interested
+          interested_peers << msg_type if msg_type.eql? 5
+        }
+      end 
+      threads.each { |t| t.join 5 }
+      puts interested_peers.to_s
       ip = tracker_response['peers'][0]['ip']
       port = tracker_response['peers'][0]['port']
       @socket = TCPSocket.new ip, port
